@@ -1,10 +1,10 @@
 package com.reliaquest.api.entity;
 
+import com.reliaquest.api.response.EmployeeResponse;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +16,14 @@ public class Employee {
     private Integer age;
     private String title;
     private String email;
+
+    public static Employee from(EmployeeResponse employeeResponse) {
+        return new Employee(
+                employeeResponse.getId(),
+                employeeResponse.getName(),
+                employeeResponse.getSalary(),
+                employeeResponse.getAge(),
+                employeeResponse.getTitle(),
+                employeeResponse.getEmail());
+    }
 }
