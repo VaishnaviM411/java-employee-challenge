@@ -44,7 +44,7 @@ class HttpServiceTest {
         mockClient
                 .when(get)
                 .respond(response()
-                        .withStatusCode(200)
+                        .withStatusCode(HttpStatus.OK.value())
                         .withHeader(Header.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
                         .withBody(responseBody));
 
@@ -73,5 +73,41 @@ class HttpServiceTest {
         assertEquals(errorStatus.value(), error.getStatus());
         assertEquals(errorMessage, error.getErrorMessage());
         mockClient.verify(get, exactly(1));
+    }
+
+    @Test
+    void shouldMakeDeleteRequest() throws Exception {
+        String requestBody = "requestBody";
+        HttpRequest delete = request().withMethod(HttpMethod.DELETE.name()).withBody(requestBody);
+        mockClient
+                .when(delete)
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(Header.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
+                        .withBody(responseBody));
+
+        HttpResponse<String> response = classToBeTested.makeHttpRequest(HttpMethod.DELETE.name(), mockUri, requestBody);
+
+        assertEquals(HttpStatus.OK.value(), response.statusCode());
+        assertEquals(responseBody, response.body());
+        mockClient.verify(delete, exactly(1));
+    }
+
+    @Test
+    void shouldMakePostRequest() throws Exception {
+        String requestBody = "requestBody";
+        HttpRequest post = request().withMethod(HttpMethod.POST.name()).withBody(requestBody);
+        mockClient
+                .when(post)
+                .respond(response()
+                        .withStatusCode(HttpStatus.OK.value())
+                        .withHeader(Header.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
+                        .withBody(responseBody));
+
+        HttpResponse<String> response = classToBeTested.makeHttpRequest(HttpMethod.POST.name(), mockUri, requestBody);
+
+        assertEquals(HttpStatus.OK.value(), response.statusCode());
+        assertEquals(responseBody, response.body());
+        mockClient.verify(post, exactly(1));
     }
 }
