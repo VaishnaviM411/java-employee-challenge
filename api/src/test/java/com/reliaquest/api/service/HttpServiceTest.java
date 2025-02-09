@@ -1,10 +1,12 @@
 package com.reliaquest.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 import static org.mockserver.verify.VerificationTimes.exactly;
 
+import com.reliaquest.api.exception.HttpException;
 import java.net.http.HttpResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,6 +52,26 @@ class HttpServiceTest {
 
         assertEquals(HttpStatus.OK.value(), response.statusCode());
         assertEquals(responseBody, response.body());
+        mockClient.verify(get, exactly(1));
+    }
+
+    @Test
+    void shouldThrowHttpExceptionOnFailedCall() {
+        HttpRequest get = request().withMethod(HttpMethod.GET.name());
+        HttpStatus errorStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        String errorMessage = "error";
+        mockClient
+                .when(get)
+                .respond(response()
+                        .withStatusCode(errorStatus.value())
+                        .withHeader(Header.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString()))
+                        .withBody(errorMessage));
+
+        HttpException error = assertThrows(
+                HttpException.class, () -> classToBeTested.makeHttpRequest(HttpMethod.GET.name(), mockUri, ""));
+
+        assertEquals(errorStatus.value(), error.getStatus());
+        assertEquals(errorMessage, error.getErrorMessage());
         mockClient.verify(get, exactly(1));
     }
 }
