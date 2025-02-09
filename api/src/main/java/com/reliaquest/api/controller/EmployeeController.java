@@ -29,7 +29,14 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<List<Employee>> getEmployeesByNameSearch(String searchString) {
-        return null;
+        try {
+            log.info("Received request to search employees by name " + searchString);
+            List<Employee> searchResult = employeeService.searchEmployeesByName(searchString);
+            return ResponseEntity.ok(searchResult);
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -22,6 +22,16 @@ public class TestEmployeeBuilder {
         return this.employeeResponse;
     }
 
+    public EmployeeResponse mockEmployeeResponse(Employee employee) {
+        return new EmployeeResponse(
+                employee.getId(),
+                employee.getName(),
+                employee.getSalary(),
+                employee.getAge(),
+                employee.getTitle(),
+                employee.getEmail());
+    }
+
     public EmployeeServerResponse<List<EmployeeResponse>> mockAllEmployeeResponse(EmployeeResponse employeeResponse) {
         return new EmployeeServerResponse<>(List.of(employeeResponse), EmployeeServerResponse.Status.HANDLED, null);
     }

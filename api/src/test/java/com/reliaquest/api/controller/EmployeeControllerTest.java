@@ -34,4 +34,16 @@ class EmployeeControllerTest {
         assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), employees);
         verify(mockEmployeeService, times(1)).getEmployees();
     }
+
+    @Test
+    void shouldSearchEmployeeByName() throws Exception {
+        String searchString = "Joh";
+        List<Employee> expectedResult = List.of(testUtil.mockEmployeeWithName("John Doe"));
+        when(mockEmployeeService.searchEmployeesByName(searchString)).thenReturn(expectedResult);
+
+        ResponseEntity<List<Employee>> employees = employeeController.getEmployeesByNameSearch(searchString);
+
+        assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), employees);
+        verify(mockEmployeeService, times(1)).searchEmployeesByName(searchString);
+    }
 }

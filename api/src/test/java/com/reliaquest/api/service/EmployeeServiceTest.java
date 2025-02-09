@@ -37,4 +37,17 @@ class EmployeeServiceTest {
                 employees);
         verify(employeeServerService, times(1)).getAllEmployees();
     }
+
+    @Test
+    void shouldSearchEmployeesByName() throws Exception {
+        Employee employee = testUtils.mockEmployeeWithName("John Doe");
+        EmployeeServerResponse<List<EmployeeResponse>> allEmployeeResponse =
+                testUtils.mockAllEmployeeResponse(testUtils.mockEmployeeResponse(employee));
+        when(employeeServerService.getAllEmployees()).thenReturn(allEmployeeResponse);
+
+        List<Employee> employees = classToBeTested.searchEmployeesByName("joh");
+
+        assertEquals(List.of(employee), employees);
+        verify(employeeServerService, times(1)).getAllEmployees();
+    }
 }

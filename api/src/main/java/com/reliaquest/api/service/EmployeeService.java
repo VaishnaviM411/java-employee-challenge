@@ -15,4 +15,10 @@ public class EmployeeService {
         List<EmployeeResponse> data = employeeServerService.getAllEmployees().data();
         return data.stream().map(Employee::from).toList();
     }
+
+    public List<Employee> searchEmployeesByName(String searchString) throws Exception {
+        return getEmployees().stream()
+                .filter(it -> it.getName().toLowerCase().contains(searchString.toLowerCase()))
+                .toList();
+    }
 }
