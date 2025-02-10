@@ -51,7 +51,13 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() {
-        return null;
+        try {
+            log.info("Received request to get top ten highest earning employee names");
+            return ResponseEntity.ok(employeeService.topTenHighestEarningEmployeeNames());
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

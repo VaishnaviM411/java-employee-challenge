@@ -7,7 +7,12 @@ import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
+
+import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
+
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
 class EmployeeServiceTest {
@@ -49,5 +54,34 @@ class EmployeeServiceTest {
 
         assertEquals(List.of(employee), employees);
         verify(employeeServerService, times(1)).getAllEmployees();
+    }
+
+    @Test
+    void shouldReturnTopTenHighestEarningEmployeeNames() throws Exception {
+        List<Employee> employees = buildRandomEmployees(15);
+        List<EmployeeResponse> employeeResponses = employees.stream()
+                .map(employee -> testUtils.mockEmployeeResponse(employee))
+                .toList();
+        EmployeeServerResponse<List<EmployeeResponse>> allEmployeeResponse =
+                testUtils.mockAllEmployeeResponse(employeeResponses);
+        when(employeeServerService.getAllEmployees()).thenReturn(allEmployeeResponse);
+
+        List<String> employeeNames = classToBeTested.topTenHighestEarningEmployeeNames();
+
+        assertEquals(
+                employees.stream()
+                        .sorted(Comparator.comparing(Employee::getSalary).reversed())
+                        .limit(10)
+                        .map(Employee::getName)
+                        .toList(),
+                employeeNames);
+        verify(employeeServerService, times(1)).getAllEmployees();
+    }
+
+    List<Employee> buildRandomEmployees(Integer count) {
+        List<Integer> salaries = new Random().ints(count, 0, 1000).boxed().toList();
+        return salaries.stream()
+                .map(salary -> testUtils.mockEmployee(RandomStringUtils.randomAlphabetic(10), salary))
+                .toList();
     }
 }

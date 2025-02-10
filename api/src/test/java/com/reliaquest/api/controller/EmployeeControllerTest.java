@@ -46,4 +46,15 @@ class EmployeeControllerTest {
         assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), employees);
         verify(mockEmployeeService, times(1)).searchEmployeesByName(searchString);
     }
+
+    @Test
+    void shouldGetTopTenHighestEarningEmployeeNames() throws Exception {
+        List<String> expectedResult = List.of("John");
+        when(mockEmployeeService.topTenHighestEarningEmployeeNames()).thenReturn(expectedResult);
+
+        ResponseEntity<List<String>> names = employeeController.getTopTenHighestEarningEmployeeNames();
+
+        assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), names);
+        verify(mockEmployeeService, times(1)).topTenHighestEarningEmployeeNames();
+    }
 }

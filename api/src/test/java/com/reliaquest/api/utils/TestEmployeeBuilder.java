@@ -9,6 +9,13 @@ import java.util.UUID;
 public class TestEmployeeBuilder {
 
     public Employee mockEmployee = new Employee(UUID.randomUUID(), "John Doe", 2000, 18, "SDE", "john@work.com");
+
+    public Employee mockEmployee(String name, Integer salary) {
+        this.mockEmployee.setName(name);
+        this.mockEmployee.setSalary(salary);
+        return this.mockEmployee;
+    }
+
     public EmployeeResponse employeeResponse =
             new EmployeeResponse(UUID.randomUUID(), "John Doe", 2000, 18, "SDE", "john@work.com");
 
@@ -34,5 +41,9 @@ public class TestEmployeeBuilder {
 
     public EmployeeServerResponse<List<EmployeeResponse>> mockAllEmployeeResponse(EmployeeResponse employeeResponse) {
         return new EmployeeServerResponse<>(List.of(employeeResponse), EmployeeServerResponse.Status.HANDLED, null);
+    }
+
+    public EmployeeServerResponse<List<EmployeeResponse>> mockAllEmployeeResponse(List<EmployeeResponse> employees) {
+        return new EmployeeServerResponse<>(employees, EmployeeServerResponse.Status.HANDLED, null);
     }
 }
