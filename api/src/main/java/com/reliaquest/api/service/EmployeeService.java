@@ -1,7 +1,9 @@
 package com.reliaquest.api.service;
 
 import com.reliaquest.api.entity.Employee;
+import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
+import com.reliaquest.api.response.EmployeeServerResponse;
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -37,5 +39,12 @@ public class EmployeeService {
                 .limit(10)
                 .map(Employee::getName)
                 .toList();
+    }
+
+    public Boolean deleteEmployee(String name) throws Exception {
+        EmployeeServerResponse<Boolean> employeeServerResponse =
+                employeeServerService.deleteEmployee(new EmployeeDeleteRequest(name));
+
+        return employeeServerResponse.data();
     }
 }

@@ -80,4 +80,35 @@ class EmployeeControllerTest {
         assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), names);
         verify(mockEmployeeService, times(1)).topTenHighestEarningEmployeeNames();
     }
+
+    @Test
+    void shouldDeleteEmployeeIfExists() throws Exception {
+        Employee employee = testUtil.mockEmployee;
+        when(mockEmployeeService.getEmployeeById(employee.getId().toString())).thenReturn(employee);
+        when(mockEmployeeService.deleteEmployee(employee.getName())).thenReturn(true);
+
+        ResponseEntity<String> deletedEmployeeName =
+                employeeController.deleteEmployeeById(employee.getId().toString());
+
+        assertEquals(new ResponseEntity<>(employee.getName(), HttpStatus.OK), deletedEmployeeName);
+        verify(mockEmployeeService, times(1)).getEmployeeById(employee.getId().toString());
+        verify(mockEmployeeService, times(1)).deleteEmployee(employee.getName());
+    }
+
+    @Test
+    void shouldReturnBadRequestIfEmployeeDeletionFails() throws Exception {
+        Employee employee = testUtil.mockEmployee;
+        when(mockEmployeeService.getEmployeeById(employee.getId().toString())).thenReturn(employee);
+        when(mockEmployeeService.deleteEmployee(employee.getName())).thenReturn(false);
+
+        ResponseEntity<String> response =
+                employeeController.deleteEmployeeById(employee.getId().toString());
+
+        assertEquals(
+                new ResponseEntity<>(
+                        "Employee deletion failed with name " + employee.getName(), HttpStatus.BAD_REQUEST),
+                response);
+        verify(mockEmployeeService, times(1)).getEmployeeById(employee.getId().toString());
+        verify(mockEmployeeService, times(1)).deleteEmployee(employee.getName());
+    }
 }

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reliaquest.api.exception.HttpException;
+import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.HttpResponseImpl;
@@ -77,5 +78,25 @@ class EmployeeServerServiceTest {
         assertEquals(HttpStatus.NOT_FOUND.value(), exception.getStatus());
         assertEquals(singleEmployeeResponse.status().getValue(), exception.getErrorMessage());
         verify(mockHttpService, times(1)).makeHttpRequest(HttpMethod.GET.name(), url, "");
+    }
+
+    @Test
+    void shouldCallDeleteEmployeeApi() throws Exception {
+        EmployeeDeleteRequest requestBody = new EmployeeDeleteRequest("John");
+        EmployeeServerResponse<Boolean> response =
+                new EmployeeServerResponse<>(true, EmployeeServerResponse.Status.HANDLED, null);
+        when(mockHttpService.makeHttpRequest(
+                        HttpMethod.DELETE.name(),
+                        mockEmployeeServerBaseUrl,
+                        objectMapper.writeValueAsString(requestBody)))
+                .thenReturn(HttpResponseImpl.build(HttpStatus.OK, objectMapper.writeValueAsString(response)));
+
+        assertEquals(response, classToBeTested.deleteEmployee(requestBody));
+
+        verify(mockHttpService, times(1))
+                .makeHttpRequest(
+                        HttpMethod.DELETE.name(),
+                        mockEmployeeServerBaseUrl,
+                        objectMapper.writeValueAsString(requestBody));
     }
 }

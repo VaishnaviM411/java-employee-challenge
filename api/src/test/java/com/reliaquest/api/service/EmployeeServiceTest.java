@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.exception.HttpException;
+import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
@@ -139,5 +140,31 @@ class EmployeeServiceTest {
         return salaries.stream()
                 .map(salary -> testUtils.mockEmployee(RandomStringUtils.randomAlphabetic(10), salary))
                 .toList();
+    }
+
+    @Test
+    void shouldReturnTrueIfEmployeeDeleted() throws Exception {
+        String name = "name";
+        EmployeeDeleteRequest request = new EmployeeDeleteRequest(name);
+        EmployeeServerResponse<Boolean> employeeServerResponse =
+                new EmployeeServerResponse<>(true, EmployeeServerResponse.Status.HANDLED, null);
+        when(employeeServerService.deleteEmployee(request)).thenReturn(employeeServerResponse);
+
+        assertEquals(true, classToBeTested.deleteEmployee(name));
+
+        verify(employeeServerService, times(1)).deleteEmployee(request);
+    }
+
+    @Test
+    void shouldReturnFalseIfEmployeeToBeDeletedNotFound() throws Exception {
+        String name = "name";
+        EmployeeDeleteRequest request = new EmployeeDeleteRequest(name);
+        EmployeeServerResponse<Boolean> employeeServerResponse =
+                new EmployeeServerResponse<>(false, EmployeeServerResponse.Status.HANDLED, null);
+        when(employeeServerService.deleteEmployee(request)).thenReturn(employeeServerResponse);
+
+        assertEquals(false, classToBeTested.deleteEmployee(name));
+
+        verify(employeeServerService, times(1)).deleteEmployee(request);
     }
 }

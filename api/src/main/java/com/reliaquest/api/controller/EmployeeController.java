@@ -79,6 +79,16 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<String> deleteEmployeeById(String id) {
-        return null;
+        try {
+            log.info("Received request to delete employee by id " + id);
+            Employee employee = employeeService.getEmployeeById(id);
+            if (employeeService.deleteEmployee(employee.getName())) {
+                return ResponseEntity.ok(employee.getName());
+            }
+            return ResponseEntity.badRequest().body("Employee deletion failed with name " + employee.getName());
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 }
