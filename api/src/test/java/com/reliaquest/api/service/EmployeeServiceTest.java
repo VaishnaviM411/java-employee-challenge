@@ -7,11 +7,9 @@ import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
 
@@ -53,6 +51,22 @@ class EmployeeServiceTest {
         List<Employee> employees = classToBeTested.searchEmployeesByName("joh");
 
         assertEquals(List.of(employee), employees);
+        verify(employeeServerService, times(1)).getAllEmployees();
+    }
+
+    @Test
+    void shouldReturnHighestSalary() throws Exception {
+        List<Employee> employees = List.of(testUtils.mockEmployee("John", 1000), testUtils.mockEmployee("John", 5000));
+        List<EmployeeResponse> employeeResponses = employees.stream()
+                .map(employee -> testUtils.mockEmployeeResponse(employee))
+                .toList();
+        EmployeeServerResponse<List<EmployeeResponse>> employeeServerResponse =
+                testUtils.mockAllEmployeeResponse(employeeResponses);
+        when(employeeServerService.getAllEmployees()).thenReturn(employeeServerResponse);
+
+        Integer highestSalary = classToBeTested.getHighestSalary();
+
+        assertEquals(employees.stream().mapToInt(Employee::getSalary).max().orElse(0), highestSalary);
         verify(employeeServerService, times(1)).getAllEmployees();
     }
 

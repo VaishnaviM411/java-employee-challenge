@@ -46,7 +46,13 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
-        return null;
+        try {
+            log.info("Received request to get highest salary");
+            return ResponseEntity.ok(employeeService.getHighestSalary());
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

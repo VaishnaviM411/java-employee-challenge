@@ -48,6 +48,17 @@ class EmployeeControllerTest {
     }
 
     @Test
+    void shouldGetHighestSalary() throws Exception {
+        Integer expectedResult = 1000;
+        when(mockEmployeeService.getHighestSalary()).thenReturn(expectedResult);
+
+        ResponseEntity<Integer> highestSalary = employeeController.getHighestSalaryOfEmployees();
+
+        assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), highestSalary);
+        verify(mockEmployeeService, times(1)).getHighestSalary();
+    }
+
+    @Test
     void shouldGetTopTenHighestEarningEmployeeNames() throws Exception {
         List<String> expectedResult = List.of("John");
         when(mockEmployeeService.topTenHighestEarningEmployeeNames()).thenReturn(expectedResult);

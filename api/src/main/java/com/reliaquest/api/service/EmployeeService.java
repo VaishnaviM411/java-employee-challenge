@@ -2,7 +2,6 @@ package com.reliaquest.api.service;
 
 import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.response.EmployeeResponse;
-
 import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,10 @@ public class EmployeeService {
         return getEmployees().stream()
                 .filter(it -> it.getName().toLowerCase().contains(searchString.toLowerCase()))
                 .toList();
+    }
+
+    public Integer getHighestSalary() throws Exception {
+        return getEmployees().stream().mapToInt(Employee::getSalary).max().orElse(0);
     }
 
     public List<String> topTenHighestEarningEmployeeNames() throws Exception {
