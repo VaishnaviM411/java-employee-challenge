@@ -2,6 +2,7 @@ package com.reliaquest.api.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
@@ -53,6 +54,16 @@ public class EmployeeServerService {
                 HttpMethod.DELETE.name(),
                 getEmployeeServerUrl(),
                 objectMapper.writeValueAsString(employeeDeleteRequest));
+
+        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+    }
+
+    public EmployeeServerResponse<EmployeeResponse> createEmployee(EmployeeCreationRequest employeeCreationRequest)
+            throws Exception {
+        HttpResponse<String> response = httpService.makeHttpRequest(
+                HttpMethod.POST.name(),
+                getEmployeeServerUrl(),
+                objectMapper.writeValueAsString(employeeCreationRequest));
 
         return objectMapper.readValue(response.body(), new TypeReference<>() {});
     }

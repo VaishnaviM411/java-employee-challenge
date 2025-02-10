@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 import com.reliaquest.api.entity.Employee;
+import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.service.EmployeeService;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
 import java.util.List;
@@ -110,5 +111,16 @@ class EmployeeControllerTest {
                 response);
         verify(mockEmployeeService, times(1)).getEmployeeById(employee.getId().toString());
         verify(mockEmployeeService, times(1)).deleteEmployee(employee.getName());
+    }
+
+    @Test
+    void shouldCreateEmployeeWithValidRequest() throws Exception {
+        EmployeeCreationRequest request = new EmployeeCreationRequest("John", 1220, 18, "SDE");
+        when(mockEmployeeService.createEmployee(request)).thenReturn(testUtil.mockEmployee);
+
+        ResponseEntity<Employee> response = employeeController.createEmployee(request);
+
+        assertEquals(new ResponseEntity<>(testUtil.mockEmployee, HttpStatus.OK), response);
+        verify(mockEmployeeService, times(1)).createEmployee(request);
     }
 }

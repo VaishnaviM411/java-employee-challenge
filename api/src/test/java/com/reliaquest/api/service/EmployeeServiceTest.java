@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.exception.HttpException;
+import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
@@ -166,5 +167,26 @@ class EmployeeServiceTest {
         assertEquals(false, classToBeTested.deleteEmployee(name));
 
         verify(employeeServerService, times(1)).deleteEmployee(request);
+    }
+
+    @Test
+    void shouldCreateEmployee() throws Exception {
+        EmployeeCreationRequest request = new EmployeeCreationRequest("John", 1220, 18, "SDE");
+        EmployeeServerResponse<EmployeeResponse> response =
+                new EmployeeServerResponse<>(testUtils.employeeResponse, EmployeeServerResponse.Status.HANDLED, null);
+        when(employeeServerService.createEmployee(request)).thenReturn(response);
+
+        Employee employee = classToBeTested.createEmployee(request);
+
+        assertEquals(
+                new Employee(
+                        response.data().getId(),
+                        response.data().getName(),
+                        response.data().getSalary(),
+                        response.data().getAge(),
+                        response.data().getTitle(),
+                        response.data().getEmail()),
+                employee);
+        verify(employeeServerService, times(1)).createEmployee(request);
     }
 }

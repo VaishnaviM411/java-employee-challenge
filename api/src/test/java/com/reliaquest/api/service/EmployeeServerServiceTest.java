@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.reliaquest.api.exception.HttpException;
+import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
@@ -96,6 +97,26 @@ class EmployeeServerServiceTest {
         verify(mockHttpService, times(1))
                 .makeHttpRequest(
                         HttpMethod.DELETE.name(),
+                        mockEmployeeServerBaseUrl,
+                        objectMapper.writeValueAsString(requestBody));
+    }
+
+    @Test
+    void shouldCallCreateEmployeeApi() throws Exception {
+        EmployeeCreationRequest requestBody = new EmployeeCreationRequest("John", 1220, 18, "SDE");
+        EmployeeServerResponse<EmployeeResponse> response =
+                new EmployeeServerResponse<>(testUtils.employeeResponse, EmployeeServerResponse.Status.HANDLED, null);
+        when(mockHttpService.makeHttpRequest(
+                        HttpMethod.POST.name(),
+                        mockEmployeeServerBaseUrl,
+                        objectMapper.writeValueAsString(requestBody)))
+                .thenReturn(HttpResponseImpl.build(HttpStatus.OK, objectMapper.writeValueAsString(response)));
+
+        assertEquals(response, classToBeTested.createEmployee(requestBody));
+
+        verify(mockHttpService, times(1))
+                .makeHttpRequest(
+                        HttpMethod.POST.name(),
                         mockEmployeeServerBaseUrl,
                         objectMapper.writeValueAsString(requestBody));
     }

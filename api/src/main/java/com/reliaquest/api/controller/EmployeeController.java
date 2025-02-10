@@ -74,7 +74,13 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Employee> createEmployee(EmployeeCreationRequest employeeInput) {
-        return null;
+        try {
+            log.info("Received request to create employee " + employeeInput);
+            return ResponseEntity.ok(employeeService.createEmployee(employeeInput));
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

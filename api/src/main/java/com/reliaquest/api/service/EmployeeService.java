@@ -1,6 +1,7 @@
 package com.reliaquest.api.service;
 
 import com.reliaquest.api.entity.Employee;
+import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
@@ -46,5 +47,10 @@ public class EmployeeService {
                 employeeServerService.deleteEmployee(new EmployeeDeleteRequest(name));
 
         return employeeServerResponse.data();
+    }
+
+    public Employee createEmployee(EmployeeCreationRequest employeeCreationRequest) throws Exception {
+        return Employee.from(
+                employeeServerService.createEmployee(employeeCreationRequest).data());
     }
 }
