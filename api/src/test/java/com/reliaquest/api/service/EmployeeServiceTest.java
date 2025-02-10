@@ -1,9 +1,11 @@
 package com.reliaquest.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import com.reliaquest.api.entity.Employee;
+import com.reliaquest.api.exception.HttpException;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class EmployeeServiceTest {
 
@@ -52,6 +55,45 @@ class EmployeeServiceTest {
 
         assertEquals(List.of(employee), employees);
         verify(employeeServerService, times(1)).getAllEmployees();
+    }
+
+    @Test
+    void shouldGetEmployeeById() throws Exception {
+        String id = "id";
+        EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse = testUtils.mockSingleEmployeeResponse();
+        EmployeeResponse employeeResponse = singleEmployeeResponse.data();
+        when(employeeServerService.getEmployeeById(id)).thenReturn(singleEmployeeResponse);
+
+        Employee employee = classToBeTested.getEmployeeById(id);
+
+        assertEquals(
+                new Employee(
+                        employeeResponse.getId(),
+                        employeeResponse.getName(),
+                        employeeResponse.getSalary(),
+                        employeeResponse.getAge(),
+                        employeeResponse.getTitle(),
+                        employeeResponse.getEmail()),
+                employee);
+        verify(employeeServerService, times(1)).getEmployeeById(id);
+    }
+
+    @Test
+    void shouldThrowErrorIfEmployeeNotFound() throws Exception {
+        String id = "id";
+        EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse =
+                new EmployeeServerResponse<>(null, EmployeeServerResponse.Status.HANDLED, null);
+        when(employeeServerService.getEmployeeById(id))
+                .thenThrow(new HttpException(
+                        HttpStatus.NOT_FOUND.value(),
+                        singleEmployeeResponse.status().getValue(),
+                        null));
+
+        HttpException exception = assertThrows(HttpException.class, () -> classToBeTested.getEmployeeById(id));
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exception.getStatus());
+        assertEquals(singleEmployeeResponse.status().getValue(), exception.getErrorMessage());
+        verify(employeeServerService, times(1)).getEmployeeById(id);
     }
 
     @Test

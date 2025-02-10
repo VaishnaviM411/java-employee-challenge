@@ -1,9 +1,11 @@
 package com.reliaquest.api.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reliaquest.api.exception.HttpException;
 import com.reliaquest.api.response.EmployeeResponse;
 import com.reliaquest.api.response.EmployeeServerResponse;
 import com.reliaquest.api.utils.HttpResponseImpl;
@@ -42,5 +44,38 @@ class EmployeeServerServiceTest {
         assertEquals(response, classToBeTested.getAllEmployees());
 
         verify(mockHttpService, times(1)).makeHttpRequest(HttpMethod.GET.name(), mockEmployeeServerBaseUrl, "");
+    }
+
+    @Test
+    void shouldCallGetEmployeeByIdApi() throws Exception {
+        String id = "id";
+        EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse = testUtils.mockSingleEmployeeResponse();
+        String url = mockEmployeeServerBaseUrl + "/" + id;
+        when(mockHttpService.makeHttpRequest(HttpMethod.GET.name(), url, ""))
+                .thenReturn(
+                        HttpResponseImpl.build(HttpStatus.OK, objectMapper.writeValueAsString(singleEmployeeResponse)));
+
+        assertEquals(singleEmployeeResponse, classToBeTested.getEmployeeById(id));
+
+        verify(mockHttpService, times(1)).makeHttpRequest(HttpMethod.GET.name(), url, "");
+    }
+
+    @Test
+    void shouldThrowErrorIfEmployeeNotFound() throws Exception {
+        String id = "id";
+        EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse =
+                new EmployeeServerResponse<>(null, EmployeeServerResponse.Status.HANDLED, null);
+        String url = mockEmployeeServerBaseUrl + "/" + id;
+        when(mockHttpService.makeHttpRequest(HttpMethod.GET.name(), url, ""))
+                .thenThrow(new HttpException(
+                        HttpStatus.NOT_FOUND.value(),
+                        singleEmployeeResponse.status().getValue(),
+                        null));
+
+        HttpException exception = assertThrows(HttpException.class, () -> classToBeTested.getEmployeeById(id));
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exception.getStatus());
+        assertEquals(singleEmployeeResponse.status().getValue(), exception.getErrorMessage());
+        verify(mockHttpService, times(1)).makeHttpRequest(HttpMethod.GET.name(), url, "");
     }
 }

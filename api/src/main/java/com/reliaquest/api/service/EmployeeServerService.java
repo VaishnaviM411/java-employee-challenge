@@ -39,6 +39,13 @@ public class EmployeeServerService {
         return objectMapper.readValue(response.body(), new TypeReference<>() {});
     }
 
+    public EmployeeServerResponse<EmployeeResponse> getEmployeeById(String id) throws Exception {
+        HttpResponse<String> response =
+                httpService.makeHttpRequest(HttpMethod.GET.name(), getEmployeeServerUrl() + "/" + id, "");
+
+        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+    }
+
     private String getEmployeeServerUrl() {
         return "http://" + host + ":" + port + baseUrl;
     }

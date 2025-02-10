@@ -46,4 +46,8 @@ public class TestEmployeeBuilder {
     public EmployeeServerResponse<List<EmployeeResponse>> mockAllEmployeeResponse(List<EmployeeResponse> employees) {
         return new EmployeeServerResponse<>(employees, EmployeeServerResponse.Status.HANDLED, null);
     }
+
+    public EmployeeServerResponse<EmployeeResponse> mockSingleEmployeeResponse() {
+        return new EmployeeServerResponse<>(employeeResponse, EmployeeServerResponse.Status.HANDLED, null);
+    }
 }

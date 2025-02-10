@@ -23,6 +23,10 @@ public class EmployeeService {
                 .toList();
     }
 
+    public Employee getEmployeeById(String id) throws Exception {
+        return Employee.from(employeeServerService.getEmployeeById(id).data());
+    }
+
     public Integer getHighestSalary() throws Exception {
         return getEmployees().stream().mapToInt(Employee::getSalary).max().orElse(0);
     }

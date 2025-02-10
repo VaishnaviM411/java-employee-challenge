@@ -41,7 +41,13 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Employee> getEmployeeById(String id) {
-        return null;
+        try {
+            log.info("Received request to get employee by id " + id);
+            return ResponseEntity.ok(employeeService.getEmployeeById(id));
+        } catch (Exception e) {
+            log.error("Request failed with error", e);
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
