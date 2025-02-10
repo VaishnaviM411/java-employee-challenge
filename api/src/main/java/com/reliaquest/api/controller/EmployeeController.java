@@ -18,25 +18,15 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<List<Employee>> getAllEmployees() {
-        try {
-            log.info("Received request to get all employees");
-            return ResponseEntity.ok(employeeService.getEmployees());
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
-        }
+        log.info("Received request to get all employees");
+        return ResponseEntity.ok(employeeService.getEmployees());
     }
 
     @Override
     public ResponseEntity<List<Employee>> getEmployeesByNameSearch(String searchString) {
-        try {
-            log.info("Received request to search employees by name " + searchString);
-            List<Employee> searchResult = employeeService.searchEmployeesByName(searchString);
-            return ResponseEntity.ok(searchResult);
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
-        }
+        log.info("Received request to search employees by name " + searchString);
+        List<Employee> searchResult = employeeService.searchEmployeesByName(searchString);
+        return ResponseEntity.ok(searchResult);
     }
 
     @Override
@@ -47,49 +37,29 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
 
     @Override
     public ResponseEntity<Integer> getHighestSalaryOfEmployees() {
-        try {
-            log.info("Received request to get highest salary");
-            return ResponseEntity.ok(employeeService.getHighestSalary());
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
-        }
+        log.info("Received request to get highest salary");
+        return ResponseEntity.ok(employeeService.getHighestSalary());
     }
 
     @Override
     public ResponseEntity<List<String>> getTopTenHighestEarningEmployeeNames() {
-        try {
-            log.info("Received request to get top ten highest earning employee names");
-            return ResponseEntity.ok(employeeService.topTenHighestEarningEmployeeNames());
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
-        }
+        log.info("Received request to get top ten highest earning employee names");
+        return ResponseEntity.ok(employeeService.topTenHighestEarningEmployeeNames());
     }
 
     @Override
     public ResponseEntity<Employee> createEmployee(EmployeeCreationRequest employeeInput) {
-        try {
-            log.info("Received request to create employee " + employeeInput);
-            return ResponseEntity.ok(employeeService.createEmployee(employeeInput));
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
-        }
+        log.info("Received request to create employee " + employeeInput);
+        return ResponseEntity.ok(employeeService.createEmployee(employeeInput));
     }
 
     @Override
     public ResponseEntity<String> deleteEmployeeById(String id) {
-        try {
-            log.info("Received request to delete employee by id " + id);
-            Employee employee = employeeService.getEmployeeById(id);
-            if (employeeService.deleteEmployee(employee.getName())) {
-                return ResponseEntity.ok(employee.getName());
-            }
-            return ResponseEntity.badRequest().body("Employee deletion failed with name " + employee.getName());
-        } catch (Exception e) {
-            log.error("Request failed with error", e);
-            throw new RuntimeException(e);
+        log.info("Received request to delete employee by id " + id);
+        Employee employee = employeeService.getEmployeeById(id);
+        if (employeeService.deleteEmployee(employee.getName())) {
+            return ResponseEntity.ok(employee.getName());
         }
+        return ResponseEntity.badRequest().body("Employee deletion failed with name " + employee.getName());
     }
 }

@@ -15,12 +15,12 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
     private final EmployeeServerService employeeServerService;
 
-    public List<Employee> getEmployees() throws Exception {
+    public List<Employee> getEmployees() {
         List<EmployeeResponse> data = employeeServerService.getAllEmployees().data();
         return data.stream().map(Employee::from).toList();
     }
 
-    public List<Employee> searchEmployeesByName(String searchString) throws Exception {
+    public List<Employee> searchEmployeesByName(String searchString) {
         return getEmployees().stream()
                 .filter(it -> it.getName().toLowerCase().contains(searchString.toLowerCase()))
                 .toList();
@@ -30,11 +30,11 @@ public class EmployeeService {
         return Employee.from(employeeServerService.getEmployeeById(id).data());
     }
 
-    public Integer getHighestSalary() throws Exception {
+    public Integer getHighestSalary() {
         return getEmployees().stream().mapToInt(Employee::getSalary).max().orElse(0);
     }
 
-    public List<String> topTenHighestEarningEmployeeNames() throws Exception {
+    public List<String> topTenHighestEarningEmployeeNames() {
         return getEmployees().stream()
                 .sorted(Comparator.comparing(Employee::getSalary).reversed())
                 .limit(10)
@@ -42,14 +42,14 @@ public class EmployeeService {
                 .toList();
     }
 
-    public Boolean deleteEmployee(String name) throws Exception {
+    public Boolean deleteEmployee(String name) {
         EmployeeServerResponse<Boolean> employeeServerResponse =
                 employeeServerService.deleteEmployee(new EmployeeDeleteRequest(name));
 
         return employeeServerResponse.data();
     }
 
-    public Employee createEmployee(EmployeeCreationRequest employeeCreationRequest) throws Exception {
+    public Employee createEmployee(EmployeeCreationRequest employeeCreationRequest) {
         return Employee.from(
                 employeeServerService.createEmployee(employeeCreationRequest).data());
     }

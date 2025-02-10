@@ -25,7 +25,7 @@ class EmployeeServiceTest {
     EmployeeService classToBeTested = new EmployeeService(employeeServerService);
 
     @Test
-    void shouldGetEmployees() throws Exception {
+    void shouldGetEmployees() {
         EmployeeServerResponse<List<EmployeeResponse>> allEmployeeResponse =
                 testUtils.mockAllEmployeeResponse(testUtils.employeeResponse);
         EmployeeResponse employeeResponse =
@@ -47,7 +47,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldSearchEmployeesByName() throws Exception {
+    void shouldSearchEmployeesByName() {
         Employee employee = testUtils.mockEmployeeWithName("John Doe");
         EmployeeServerResponse<List<EmployeeResponse>> allEmployeeResponse =
                 testUtils.mockAllEmployeeResponse(testUtils.mockEmployeeResponse(employee));
@@ -60,7 +60,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldGetEmployeeById() throws Exception {
+    void shouldGetEmployeeById() {
         String id = "id";
         EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse = testUtils.mockSingleEmployeeResponse();
         EmployeeResponse employeeResponse = singleEmployeeResponse.data();
@@ -81,7 +81,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldThrowErrorIfEmployeeNotFound() throws Exception {
+    void shouldThrowErrorIfEmployeeNotFound() {
         String id = "id";
         EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse =
                 new EmployeeServerResponse<>(null, EmployeeServerResponse.Status.HANDLED, null);
@@ -99,7 +99,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldReturnHighestSalary() throws Exception {
+    void shouldReturnHighestSalary() {
         List<Employee> employees = List.of(testUtils.mockEmployee("John", 1000), testUtils.mockEmployee("John", 5000));
         List<EmployeeResponse> employeeResponses = employees.stream()
                 .map(employee -> testUtils.mockEmployeeResponse(employee))
@@ -115,7 +115,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldReturnTopTenHighestEarningEmployeeNames() throws Exception {
+    void shouldReturnTopTenHighestEarningEmployeeNames() {
         List<Employee> employees = buildRandomEmployees(15);
         List<EmployeeResponse> employeeResponses = employees.stream()
                 .map(employee -> testUtils.mockEmployeeResponse(employee))
@@ -144,7 +144,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldReturnTrueIfEmployeeDeleted() throws Exception {
+    void shouldReturnTrueIfEmployeeDeleted() {
         String name = "name";
         EmployeeDeleteRequest request = new EmployeeDeleteRequest(name);
         EmployeeServerResponse<Boolean> employeeServerResponse =
@@ -157,7 +157,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldReturnFalseIfEmployeeToBeDeletedNotFound() throws Exception {
+    void shouldReturnFalseIfEmployeeToBeDeletedNotFound() {
         String name = "name";
         EmployeeDeleteRequest request = new EmployeeDeleteRequest(name);
         EmployeeServerResponse<Boolean> employeeServerResponse =
@@ -170,7 +170,7 @@ class EmployeeServiceTest {
     }
 
     @Test
-    void shouldCreateEmployee() throws Exception {
+    void shouldCreateEmployee() {
         EmployeeCreationRequest request = new EmployeeCreationRequest("John", 1220, 18, "SDE");
         EmployeeServerResponse<EmployeeResponse> response =
                 new EmployeeServerResponse<>(testUtils.employeeResponse, EmployeeServerResponse.Status.HANDLED, null);

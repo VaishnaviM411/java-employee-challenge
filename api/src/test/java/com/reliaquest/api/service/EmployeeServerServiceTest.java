@@ -63,7 +63,7 @@ class EmployeeServerServiceTest {
     }
 
     @Test
-    void shouldThrowErrorIfEmployeeNotFound() throws Exception {
+    void shouldThrowErrorIfEmployeeNotFound() {
         String id = "id";
         EmployeeServerResponse<EmployeeResponse> singleEmployeeResponse =
                 new EmployeeServerResponse<>(null, EmployeeServerResponse.Status.HANDLED, null);

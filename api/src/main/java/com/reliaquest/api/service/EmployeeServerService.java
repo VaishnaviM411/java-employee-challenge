@@ -38,43 +38,77 @@ public class EmployeeServerService {
         this.httpService = httpService;
     }
 
-    public EmployeeServerResponse<List<EmployeeResponse>> getAllEmployees() throws Exception {
+    public EmployeeServerResponse<List<EmployeeResponse>> getAllEmployees() {
         HttpResponse<String> response = httpService.makeHttpRequest(HttpMethod.GET.name(), getEmployeeServerUrl(), "");
-        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        return readEmployeeListFromJson(response);
     }
 
     public EmployeeServerResponse<EmployeeResponse> getEmployeeById(String id) {
         HttpResponse<String> response =
                 httpService.makeHttpRequest(HttpMethod.GET.name(), getEmployeeServerUrl() + "/" + id, "");
 
-        return readValueFromJson(response);
+        return readEmployeeFromJson(response);
     }
 
-    public EmployeeServerResponse<Boolean> deleteEmployee(EmployeeDeleteRequest employeeDeleteRequest)
-            throws Exception {
+    public EmployeeServerResponse<Boolean> deleteEmployee(EmployeeDeleteRequest employeeDeleteRequest) {
         HttpResponse<String> response = httpService.makeHttpRequest(
-                HttpMethod.DELETE.name(),
-                getEmployeeServerUrl(),
-                objectMapper.writeValueAsString(employeeDeleteRequest));
+                HttpMethod.DELETE.name(), getEmployeeServerUrl(), writeToJson(employeeDeleteRequest));
 
-        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        return readBooleanFromJson(response);
     }
 
-    public EmployeeServerResponse<EmployeeResponse> createEmployee(EmployeeCreationRequest employeeCreationRequest)
-            throws Exception {
+    public EmployeeServerResponse<EmployeeResponse> createEmployee(EmployeeCreationRequest employeeCreationRequest) {
         HttpResponse<String> response = httpService.makeHttpRequest(
-                HttpMethod.POST.name(),
-                getEmployeeServerUrl(),
-                objectMapper.writeValueAsString(employeeCreationRequest));
+                HttpMethod.POST.name(), getEmployeeServerUrl(), writeToJson(employeeCreationRequest));
 
-        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        return readEmployeeFromJson(response);
+    }
+
+    private String writeToJson(EmployeeCreationRequest employeeCreationRequest) {
+        try {
+            return objectMapper.writeValueAsString(employeeCreationRequest);
+        } catch (Exception exception) {
+            throw new HttpException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error occurred while generating json request body",
+                    exception);
+        }
+    }
+
+    private String writeToJson(EmployeeDeleteRequest employeeDeleteRequest) {
+        try {
+            return objectMapper.writeValueAsString(employeeDeleteRequest);
+        } catch (Exception exception) {
+            throw new HttpException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                    "Error occurred while generating json request body",
+                    exception);
+        }
     }
 
     private String getEmployeeServerUrl() {
         return "http://" + host + ":" + port + baseUrl;
     }
 
-    private EmployeeServerResponse<EmployeeResponse> readValueFromJson(HttpResponse<String> response) {
+    private EmployeeServerResponse<List<EmployeeResponse>> readEmployeeListFromJson(HttpResponse<String> response) {
+        try {
+            return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        } catch (Exception exception) {
+            throw new HttpException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error occurred while parsing json response", exception);
+        }
+    }
+
+    private EmployeeServerResponse<EmployeeResponse> readEmployeeFromJson(HttpResponse<String> response) {
+        try {
+            return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        } catch (Exception exception) {
+            throw new HttpException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error occurred while parsing json response", exception);
+        }
+    }
+
+    private EmployeeServerResponse<Boolean> readBooleanFromJson(HttpResponse<String> response) {
         try {
             return objectMapper.readValue(response.body(), new TypeReference<>() {});
         } catch (Exception exception) {

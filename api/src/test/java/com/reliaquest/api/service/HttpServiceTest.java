@@ -39,7 +39,7 @@ class HttpServiceTest {
     }
 
     @Test
-    void shouldMakeGetRequest() throws Exception {
+    void shouldMakeGetRequest() {
         HttpRequest get = request().withMethod(HttpMethod.GET.name());
         mockClient
                 .when(get)
@@ -76,7 +76,7 @@ class HttpServiceTest {
     }
 
     @Test
-    void shouldMakeDeleteRequest() throws Exception {
+    void shouldMakeDeleteRequest() {
         String requestBody = "requestBody";
         HttpRequest delete = request().withMethod(HttpMethod.DELETE.name()).withBody(requestBody);
         mockClient
@@ -94,7 +94,7 @@ class HttpServiceTest {
     }
 
     @Test
-    void shouldMakePostRequest() throws Exception {
+    void shouldMakePostRequest() {
         String requestBody = "requestBody";
         HttpRequest post = request().withMethod(HttpMethod.POST.name()).withBody(requestBody);
         mockClient

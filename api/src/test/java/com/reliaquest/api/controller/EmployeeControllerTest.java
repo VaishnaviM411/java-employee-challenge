@@ -28,7 +28,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldGetAllEmployees() throws Exception {
+    void shouldGetAllEmployees() {
         List<Employee> expectedResult = List.of(testUtil.mockEmployeeWithName("John Doe"));
         when(mockEmployeeService.getEmployees()).thenReturn(expectedResult);
 
@@ -39,7 +39,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldSearchEmployeeByName() throws Exception {
+    void shouldSearchEmployeeByName() {
         String searchString = "Joh";
         List<Employee> expectedResult = List.of(testUtil.mockEmployeeWithName("John Doe"));
         when(mockEmployeeService.searchEmployeesByName(searchString)).thenReturn(expectedResult);
@@ -66,10 +66,8 @@ class EmployeeControllerTest {
     void shouldReturnErrorIfEmployeeNotFound() {
         String id = "id";
         String error = "error";
-        when(mockEmployeeService.getEmployeeById(id)).thenThrow(new HttpException(
-                HttpStatus.NOT_FOUND.value(),
-                error,
-                null));
+        when(mockEmployeeService.getEmployeeById(id))
+                .thenThrow(new HttpException(HttpStatus.NOT_FOUND.value(), error, null));
 
         HttpException exception = assertThrows(HttpException.class, () -> employeeController.getEmployeeById(id));
 
@@ -79,7 +77,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldGetHighestSalary() throws Exception {
+    void shouldGetHighestSalary() {
         Integer expectedResult = 1000;
         when(mockEmployeeService.getHighestSalary()).thenReturn(expectedResult);
 
@@ -90,7 +88,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldGetTopTenHighestEarningEmployeeNames() throws Exception {
+    void shouldGetTopTenHighestEarningEmployeeNames() {
         List<String> expectedResult = List.of("John");
         when(mockEmployeeService.topTenHighestEarningEmployeeNames()).thenReturn(expectedResult);
 
@@ -101,7 +99,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldDeleteEmployeeIfExists() throws Exception {
+    void shouldDeleteEmployeeIfExists() {
         Employee employee = testUtil.mockEmployee;
         when(mockEmployeeService.getEmployeeById(employee.getId().toString())).thenReturn(employee);
         when(mockEmployeeService.deleteEmployee(employee.getName())).thenReturn(true);
@@ -115,7 +113,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestIfEmployeeDeletionFails() throws Exception {
+    void shouldReturnBadRequestIfEmployeeDeletionFails() {
         Employee employee = testUtil.mockEmployee;
         when(mockEmployeeService.getEmployeeById(employee.getId().toString())).thenReturn(employee);
         when(mockEmployeeService.deleteEmployee(employee.getName())).thenReturn(false);
@@ -132,7 +130,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldCreateEmployeeWithValidRequest() throws Exception {
+    void shouldCreateEmployeeWithValidRequest() {
         EmployeeCreationRequest request = new EmployeeCreationRequest("John", 1220, 18, "SDE");
         when(mockEmployeeService.createEmployee(request)).thenReturn(testUtil.mockEmployee);
 
