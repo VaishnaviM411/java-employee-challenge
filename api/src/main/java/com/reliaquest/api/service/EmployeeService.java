@@ -26,7 +26,7 @@ public class EmployeeService {
                 .toList();
     }
 
-    public Employee getEmployeeById(String id) throws Exception {
+    public Employee getEmployeeById(String id) {
         return Employee.from(employeeServerService.getEmployeeById(id).data());
     }
 

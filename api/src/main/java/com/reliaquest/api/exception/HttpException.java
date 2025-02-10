@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class HttpException extends Exception {
+public class HttpException extends RuntimeException {
     int status;
     String errorMessage;
     Throwable throwable;

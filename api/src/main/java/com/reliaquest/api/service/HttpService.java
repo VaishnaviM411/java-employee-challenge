@@ -32,27 +32,33 @@ public class HttpService {
         return response.statusCode() != HttpStatus.OK.value();
     }
 
-    public HttpResponse<String> makeHttpRequest(String method, String url, String body) throws Exception {
-        logRequest(url, body);
+    public HttpResponse<String> makeHttpRequest(String method, String url, String body) {
+        try {
+            logRequest(url, body);
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .headers(
-                        HttpHeaders.ACCEPT,
-                        MediaType.APPLICATION_JSON_VALUE,
-                        HttpHeaders.CONTENT_TYPE,
-                        MediaType.APPLICATION_JSON_VALUE)
-                .method(method, HttpRequest.BodyPublishers.ofString(body))
-                .build();
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .headers(
+                            HttpHeaders.ACCEPT,
+                            MediaType.APPLICATION_JSON_VALUE,
+                            HttpHeaders.CONTENT_TYPE,
+                            MediaType.APPLICATION_JSON_VALUE)
+                    .method(method, HttpRequest.BodyPublishers.ofString(body))
+                    .build();
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
-        if (isRequestSuccessful(response)) {
-            logFailedRequest(response);
-            throw new HttpException(response.statusCode(), response.body(), null);
+            if (isRequestSuccessful(response)) {
+                logFailedRequest(response);
+                throw new HttpException(response.statusCode(), response.body(), null);
+            }
+
+            logResponse(response);
+            return response;
+        } catch (HttpException exception) {
+            throw exception;
+        } catch (Exception exception) {
+            throw new HttpException(HttpStatus.INTERNAL_SERVER_ERROR.value(), exception.getMessage(), exception);
         }
-
-        logResponse(response);
-        return response;
     }
 
     private void logFailedRequest(HttpResponse<String> response) {

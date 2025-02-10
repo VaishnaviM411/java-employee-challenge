@@ -2,6 +2,7 @@ package com.reliaquest.api.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.reliaquest.api.exception.HttpException;
 import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.request.EmployeeDeleteRequest;
 import com.reliaquest.api.response.EmployeeResponse;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -41,11 +43,11 @@ public class EmployeeServerService {
         return objectMapper.readValue(response.body(), new TypeReference<>() {});
     }
 
-    public EmployeeServerResponse<EmployeeResponse> getEmployeeById(String id) throws Exception {
+    public EmployeeServerResponse<EmployeeResponse> getEmployeeById(String id) {
         HttpResponse<String> response =
                 httpService.makeHttpRequest(HttpMethod.GET.name(), getEmployeeServerUrl() + "/" + id, "");
 
-        return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        return readValueFromJson(response);
     }
 
     public EmployeeServerResponse<Boolean> deleteEmployee(EmployeeDeleteRequest employeeDeleteRequest)
@@ -70,5 +72,14 @@ public class EmployeeServerService {
 
     private String getEmployeeServerUrl() {
         return "http://" + host + ":" + port + baseUrl;
+    }
+
+    private EmployeeServerResponse<EmployeeResponse> readValueFromJson(HttpResponse<String> response) {
+        try {
+            return objectMapper.readValue(response.body(), new TypeReference<>() {});
+        } catch (Exception exception) {
+            throw new HttpException(
+                    HttpStatus.INTERNAL_SERVER_ERROR.value(), "Error occurred while parsing json response", exception);
+        }
     }
 }
