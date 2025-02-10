@@ -1,9 +1,11 @@
 package com.reliaquest.api.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 import com.reliaquest.api.entity.Employee;
+import com.reliaquest.api.exception.HttpException;
 import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.service.EmployeeService;
 import com.reliaquest.api.utils.TestEmployeeBuilder;
@@ -49,7 +51,7 @@ class EmployeeControllerTest {
     }
 
     @Test
-    void shouldGetEmployeeById() throws Exception {
+    void shouldGetEmployeeById() {
         String id = "id";
         Employee expectedResult = testUtil.mockEmployee;
         when(mockEmployeeService.getEmployeeById(id)).thenReturn(expectedResult);
@@ -57,6 +59,22 @@ class EmployeeControllerTest {
         ResponseEntity<Employee> employee = employeeController.getEmployeeById(id);
 
         assertEquals(new ResponseEntity<>(expectedResult, HttpStatus.OK), employee);
+        verify(mockEmployeeService, times(1)).getEmployeeById(id);
+    }
+
+    @Test
+    void shouldReturnErrorIfEmployeeNotFound() {
+        String id = "id";
+        String error = "error";
+        when(mockEmployeeService.getEmployeeById(id)).thenThrow(new HttpException(
+                HttpStatus.NOT_FOUND.value(),
+                error,
+                null));
+
+        HttpException exception = assertThrows(HttpException.class, () -> employeeController.getEmployeeById(id));
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exception.getStatus());
+        assertEquals(error, exception.getErrorMessage());
         verify(mockEmployeeService, times(1)).getEmployeeById(id);
     }
 
