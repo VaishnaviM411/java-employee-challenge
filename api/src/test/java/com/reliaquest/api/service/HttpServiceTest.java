@@ -25,8 +25,8 @@ class HttpServiceTest {
     String mockUri = "http://localhost:" + port;
     String responseBody = "response";
     Integer timeOutInSec = 60;
-    private ClientAndServer mockClient;
     private final HttpService classToBeTested = new HttpService(timeOutInSec);
+    private ClientAndServer mockClient;
 
     @BeforeEach
     void setUp() {

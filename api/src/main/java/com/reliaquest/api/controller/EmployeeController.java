@@ -3,6 +3,7 @@ package com.reliaquest.api.controller;
 import com.reliaquest.api.entity.Employee;
 import com.reliaquest.api.request.EmployeeCreationRequest;
 import com.reliaquest.api.service.EmployeeService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +49,7 @@ public class EmployeeController implements IEmployeeController<Employee, Employe
     }
 
     @Override
-    public ResponseEntity<Employee> createEmployee(EmployeeCreationRequest employeeInput) {
+    public ResponseEntity<Employee> createEmployee(@Valid EmployeeCreationRequest employeeInput) {
         log.info("Received request to create employee " + employeeInput);
         return ResponseEntity.ok(employeeService.createEmployee(employeeInput));
     }
